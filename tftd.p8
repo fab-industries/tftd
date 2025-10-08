@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
---thought for the day (v.0.01)
+--thought for the day (v0.01)
 --by fab.industries
 
 function _init()
