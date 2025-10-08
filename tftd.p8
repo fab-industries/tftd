@@ -1,0 +1,457 @@
+pico-8 cartridge // http://www.pico-8.com
+version 43
+__lua__
+--thought for the day (v.0.01)
+--by fab.industries
+
+function _init()
+
+ cls(0)
+ t=0
+ offset=1
+ max_lin=0
+ wsly=-1
+ glitch_t=0
+ glitch_newt=true
+ 
+ cartdata("fabsh_tftd")
+ tftd_cart=dget(1)
+ tftd=thoughts[tftd_cart]
+ 
+end
+
+function _update()
+
+ t+=1
+ current_time()
+ newday_check()
+ move_wsl()
+
+end
+
+function _draw()
+
+ cls(0)
+ 
+ spr(0,31,12,8,3)
+ 
+ print("\^w\^t"..clock,32,40,3)
+ print(date,39,52,11)
+ print_thought()
+ 
+ glitch()
+ draw_wsl() 
+ scanlines()
+ vignette()
+ 
+end
+-->8
+--thoughts
+
+thoughts={
+ "+++ there is no such thing|as innocence - only varying|degrees of guilt. +++",
+ "+++ reason begets doubt;|doubt begets heresy. +++",
+ "+++ only the awkward|question; only the foolish|ask twice. +++",
+ "+++ success is measured in|blood; yours or your|enemy's. +++",
+ "+++ the reward for treachery|is retribution. +++",
+ "+++ hope is the beginning|of unhappiness +++",
+ "+++ even a man who has|nothing can still offer|his life. +++",
+ "+++ inspiration grows from|the barrel of a gun. +++",
+ "+++ walk softly and|carry a big gun. +++",
+ "+++ a mind without purpose|will wander in dark places. +++",
+ "+++ a moment of laxity|spawns a lifetime|of heresy. +++",
+ "+++ a small mind is|a tidy mind. +++",
+ "+++ a suspicious mind|is a healthy mind. +++",
+ "+++ an open mind is like|a fortress with its gates|unbarred and unguarded +++",
+ "+++ call no man happy|until he is dead. +++",
+ "+++ death is the servant|of the righteous. +++",
+ "+++ doubt is a sign|of weakness. +++",
+ "+++ excuses are the|refuge of the weak. +++",
+ "+++ foolish are those|who fear nothing, yet claim|to know everything. +++",
+ "+++ for a warrior the only|crime is cowardice. +++",
+ "+++ happiness is a delusion|of the weak. +++",
+ "+++ hate enriches. +++",
+ "+++ heresy grows|from idleness. +++",
+ "+++ success is commemorated.|failure merely remembered. +++",
+ "+++ the rewards of|tolerance are treachery|and betrayal. +++",
+ "+++ the truly wise are|always afraid. +++",
+ "+++ through the destruction|of our enemies we earn|our salvation. +++",
+ "+++ prayer cleanses the|soul, but pain cleanses|the body. +++",
+ "+++ innocence|proves nothing. +++",
+ "+++ there is nothing to fear|but failure +++",
+ "+++ to question is|to doubt. +++",
+ "+++ reason is the cloak|of traitors. +++",
+ "+++ ruthlessness is the|kindness of the wise. +++",
+ "+++ sorrow awaits|the foolhardy. +++",
+ "+++ the burden of failure|is the most terrible|punishment of all. +++",
+ "+++ the difference between|heresy and treachery is|ignorance. +++",
+ "+++ the dissident invites|only retribution. +++",
+ "+++ the justice of your action|is measured by the strength|of your conviction. +++",
+ "+++ the keenest blade|is righteous hatred. +++",
+ "+++ the most deviant mind|is often concealed in an|unblemished body. +++"
+ }
+
+-->8
+--clock
+
+function current_time()
+ 
+ local y=stat(90)
+ local m=stat(91)
+ local d=stat(92)
+ local h=stat(93)
+ local mn=stat(94)
+ local s=stat(95)
+
+ local numy=tonum(y)
+ local numm=tonum(m)
+ local numd=tonum(d)
+ local nummn=tonum(mn)
+ 
+ timestamp=numy*365+numm*30+numd
+
+ if h<10 then
+  hz="0"..h
+ else
+  hz=h
+ end
+ 
+ if mn<10 then
+  mz="0"..mn
+ else
+  mz=mn
+ end
+ 
+ if s<10 then
+  sz="0"..s
+ else
+  sz=s 
+ end
+ 
+ clock=hz..":"..mz..":"..sz
+
+ local df= imp_date(m,d,h)
+ local ys= tostr(y)
+ local yn= sub(ys,2)
+ 
+ date="0 "..df.." "..yn..".m3"
+
+end
+
+function imp_date(m,d,h)
+
+ --elapsed days in year
+ --based on avg of 30.436875
+ --days in a month
+ 
+ local cm=m-1
+ local dm=cm*30.438675
+ local cd=d-1
+ local days=dm+cd
+ 
+ --elapsed hours in year
+ 
+ local hd=days*24
+ local hours=hd+h
+ 
+ --elapsed hours in thousandth
+ --of a year
+ --based on avg of 365.2425
+ --days in a year
+ 
+ local id=hours/8.76582
+ return flr(id)
+
+end
+-->8
+--print thoughts
+
+function pick_thought()
+ 
+ local max_th=count(thoughts)
+ thought_i=flr(rnd(max_th))
+ local curr_th=thoughts[thought_i]
+
+ offset=1
+ return curr_th
+ 
+end
+
+
+function print_thought()
+
+ print("thought for the day:",24,76,3)
+
+ local lin=split(tftd,"|",false)
+ max_lin=#lin
+ 
+ foreach(lin,print_line) 
+
+end
+
+function print_line(lin)
+ 
+ if offset>max_lin then
+  offset=1
+ end
+ 
+ local yo=6*offset
+ local y=84+yo
+ 
+ local width=print(lin,0,-10)
+ 
+ print(lin,64-width/2,y,11)
+
+ offset+=1
+
+end
+-->8
+--tools
+
+function newday_check()
+ 
+ timestamp_cart=dget(0)
+ 
+ if timestamp_cart != timestamp then
+ 
+  tftd=pick_thought()
+  dset(0,timestamp) 
+  dset(1,thought_i)
+  
+ end
+ 
+end
+
+function vignette()
+
+ spr(8,-7,-6,3,3)
+ spr(8,111,-6,3,3,true)
+ spr(8,-7,111,3,3,false,true)
+ spr(8,111,111,3,3,true,true)
+ 
+end
+
+function glitch()
+ 
+ if glitch_newt==true then
+ 
+  glitch_t=flr(rnd(500))+90
+  glitch_newt=false
+  
+ end
+ 
+ if t%glitch_t==0 then
+  
+  glitch_newt=true
+  
+  local lines=lines or 64
+  for i=1,lines do
+   
+   row=flr(rnd(128))
+   row2=flr(rnd(127))
+   if (row2>=row) row2+=1
+  
+   // copy a row from the
+   // screen into temp memory
+   memcpy(0x4300, 0x6000+64*row, 64)
+		
+   //copy another row from the
+   // screen to our original row
+   memcpy(0x6000+64*row, 0x6000+64*row2, 64)
+		       
+   //copy the temp row into row2's
+   //original slot
+   memcpy(0x6000+64*row2, 0x4300,64)
+  
+  end
+ 
+ end
+ 
+end
+
+function scanlines()
+ 
+ for i=0,15 do
+  pal(i,i+128,2)
+ end	
+ -- uses alternate palette
+ poke(0x5f5f,0x10)
+ -- scanline mask
+ memset(0x5f70,0xaa,16)
+
+end
+
+--wandering scanline
+
+function draw_wsl()
+ 
+ line(0,wsly,127,wsly,3)
+
+end
+
+function move_wsl()
+
+ if wsly>-450 then
+  if t%1==0 then
+   wsly-=3
+  end
+ else
+  wsly=126
+ end
+
+end
+__gfx__
+bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000000000000000000000000000
+0bbbbbbbbbbbbbbbbbbbbbb000000000000000000bbbbbbbbbbbbbbbbbbbbbb00000000000000000000000000000000000000000000000000000000000000000
+00bbbbbbbbbbb0000000bb0000bbbb0000bbbb0000bb0000000bbbbbbbbbbb000000000000000000000000000000000000000000000000000000000000000000
+000000000bbbbbbbbbbbbb00000bb000000bbb0000bbbbbbbbbbbbb0000000000000000000000000000000000000000000000000000000000000000000000000
+000bbbbbbbbbbbb00bbbb000bb000bb00bb000bb000bbbb00bbbbbbbbbbbb0000000000000000000000000000000000000000000000000000000000000000000
+0000bbbbbb0000bbbbbbbb0000000bb00bb0000000bbbbbbbb0000bbbbbb00000000000000000000000000000000000000000000000000000000000000000000
+0000000000bbbbbbbb0bbb000000b0b00b0b000000bbb0bbbbbbbb00000000000000000000000000000000000000000000000000000000000000000000000000
+0000000bbbbbbbb00bbbbbbbbbbbbb0bb0bbbbbbbbbbbbb00bbbbbbbb00000000000000505050505050505050000000000000000000000000000000000000000
+0000000bbbbbb00bbbbbbbbbbbbbbb0bb0bbbbbbbbbbbbbbb00bbbbbb00000000000000050505050505000000000000000000000000000000000000000000000
+000000000b000bbbb0bbbbbbbbbbbbbbbbbbbbbbbbbbbb0bbbb000b0000000000000000505050505000000000000000000000000000000000000000000000000
+000000000000bbbb0bbb0bbbbb0bb0bbbb0bb0bbbbb0bbb0bbbb0000000000000000000050505000000000000000000000000000000000000000000000000000
+00000000000bbbb0bbb0bb0b0b0bb0bbbb0bb0b0b0bb0bbb0bbbb000000000000000000505050000000000000000000000000000000000000000000000000000
+000000000000bb0bbbbbbbbb00bbbbbbbbbbbb00bbbbbbbbb0bb0000000000000000000050500000000000000000000000000000000000000000000000000000
+000000000000000bbb0bb0bb000b0bbbbbb0b000bb0bb0bbb0000000000000000000000505000000000000000000000000000000000000000000000000000000
+000000000000000bb0bbb0b000000bbbbbb000000b0bbb0bb0000000000000000000000050000000000000000000000000000000000000000000000000000000
+000000000000000000bb0b000000bbbbbbbb000000b0bb0000000000000000000000000505000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000bbbbbb000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000
+000000000000000000000000000bb0bbbb0bb0000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000
+000000000000000000000000000bbb0bb0bbb0000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000
+000000000000000000000000bbbb0bbbbbb0bbbb0000000000000000000000000000000500000000000000000000000000000000000000000000000000000000
+000000000000000000000000b0bb00bbbb00bb0b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000bbbb0bbbb0bbbb00000000000000000000000000000000500000000000000000000000000000000000000000000000000000000
+0000000000000000000000000b00000bb00000b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000b000000000000b00000000000000000000000000000000500000000000000000000000000000000000000000000000000000000
+__label__
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+lglglglglglglglglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglglglglglglglglgl
+05050505050500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000505050505050
+lglglglglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglglglglgl
+05050500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000505050
+lglglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglglgl
+05050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005050
+lglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglgl
+05000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000050
+lglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglgl
+05000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000050
+lggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggl
+0500000000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000bbbbbbbbbbbbbbbbbbbbbbbb000000000000000000000000000000050
+lgggggggggggggggggggggggggggggggrrrrrrrrrrrrrrrrrrrrrrggggggggggggggggggrrrrrrrrrrrrrrrrrrrrrrgggggggggggggggggggggggggggggggggl
+000000000000000000000000000000000bbbbbbbbbbb0000000bb0000bbbb0000bbbb0000bb0000000bbbbbbbbbbb00000000000000000000000000000000000
+lgggggggggggggggggggggggggggggggggggggggrrrrrrrrrrrrrgggggrrggggggrrrggggrrrrrrrrrrrrrgggggggggggggggggggggggggggggggggggggggggl
+0000000000000000000000000000000000bbbbbbbbbbbb00bbbb000bb000bb00bb000bb000bbbb00bbbbbbbbbbbb000000000000000000000000000000000000
+lggggggggggggggggggggggggggggggggggrrrrrrggggrrrrrrrrgggggggrrggrrgggggggrrrrrrrrggggrrrrrrggggggggggggggggggggggggggggggggggggl
+00000000000000000000000000000000000000000bbbbbbbb0bbb000000b0b00b0b000000bbb0bbbbbbbb0000000000000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggggggrrrrrrrrggrrrrrrrrrrrrrgrrgrrrrrrrrrrrrrggrrrrrrrrgggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000bbbbbb00bbbbbbbbbbbbbbb0bb0bbbbbbbbbbbbbbb00bbbbbb0000000000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggggggggrgggrrrrgrrrrrrrrrrrrrrrrrrrrrrrrrrrrgrrrrgggrgggggggggggggggggggggggggggggggggggggggggg
+0000000000000000000000000000000000000000000bbbb0bbb0bbbbb0bb0bbbb0bb0bbbbb0bbb0bbbb000000000000000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggggggggggrrrrgrrrgrrgrgrgrrgrrrrgrrgrgrgrrgrrrgrrrrgggggggggggggggggggggggggggggggggggggggggggg
+0000000000000000000000000000000000000000000bb0bbbbbbbbb00bbbbbbbbbbbb00bbbbbbbbb0bb000000000000000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggggggggggggggrrrgrrgrrgggrgrrrrrrgrgggrrgrrgrrrgggggggggggggggggggggggggggggggggggggggggggggggg
+0000000000000000000000000000000000000000000000bb0bbb0b000000bbbbbb000000b0bbb0bb000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggrrgrggggggrrrrrrrrggggggrgrrggggggggggggggggggggggggggggggggggggggggggggggggggg
+000000000000000000000000000000000000000000000000000000000000bbbbbb00000000000000000000000000000000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggrrgrrrrgrrgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+0000000000000000000000000000000000000000000000000000000000bbb0bb0bbb000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggrrrrgrrrrrrgrrrrggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+0000000000000000000000000000000000000000000000000000000b0bb00bbbb00bb0b000000000000000000000000000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggggggggggggggggggggggggrrrrgrrrrgrrrrgggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000b00000bb00000b0000000000000000000000000000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggggggggggggggggggggggggrggggggggggggrgggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000333300003333330000000000333300003300000000000000333333003333330000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggjjjjggggjjjjjjggggggggggjjjjggggjjggggggggggggggjjjjjjggjjjjjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000003300000000330000330000003300003300000000330000000033003300330000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggjjggggggggjjggggjjggggggjjggggjjggggggggjjggggggggjjggjjggjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000003300000033330000000000003300003333330000000000003333003333330000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggjjggggggjjjjggggggggggggjjggggjjjjjjggggggggggggjjjjggjjjjjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000003300000000330000330000003300003300330000330000000033003300330000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggjjggggggggjjggggjjggggggjjggggjjggjjggggjjggggggggjjggjjggjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000333333003333330000000000333333003333330000000000333333003333330000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggjjjjjjggjjjjjjggggggggggjjjjjjggjjjjjjggggggggggjjjjjjggjjjjjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+000000000000000000000000000000000000000bbb00000bbb0bbb0bbb00000bbb0bbb0bbb00000bbb0bbb000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggrgrgggggggrgggrgrgrgggggrgrgggrgrgggggggrrrgggrgggggggggggggggggggggggggggggggggggggggggg
+000000000000000000000000000000000000000b0b0000000b000b0b0b00000b0b0bbb0bbb00000b0b00bb000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggrgrgggggggrgggrgrgrgggggrgrgrgggggrgggggrgrgggrgggggggggggggggggggggggggggggggggggggggggg
+000000000000000000000000000000000000000bbb0000000b000b0bbb00000bbb0bbb0bbb00b00b0b0bbb000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000033303030033030300330303033300000333003303330000033303030333000003300333030300000000000000000000000000000
+gggggggggggggggggggggggggjggjgjgjgjgjgjgjgggjgjggjggggggjgggjgjgjgjggggggjggjgjgjgggggggjgjgjgjgjgjggjgggggggggggggggggggggggggg
+00000000000000000000000003003330303030303000333003000000330030303300000003003330330000003030333033300000000000000000000000000000
+gggggggggggggggggggggggggjggjgjgjgjgjgjgjgjgjgjggjggggggjgggjgjgjgjggggggjggjgjgjgggggggjgjgjgjgggjggjgggggggggggggggggggggggggg
+00000000000000000000000003003030330003303330303003000000300033003030000003003030333000003330303033300000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+000000000000000000000000000000bbb0b0b0bbb00000bb00bbb00bb00bb0bbb0bb00bbb0bb00bbb00000bbb0bb00b0b0bbb0bbb0bbb00bb000000000000000
+gggggggggggggggrgggrgggrgggggggrggrgrgrgggggggrgrggrggrgggrggggrggrgrgrgggrgrggrgggggggrggrgrgrgrggrgggrggrgggrggggggggggggggggg
+00000000000000bbb0bbb0bbb000000b00bbb0bb000000b0b00b00bbb0bbb00b00b0b0bb00b0b00b0000000b00b0b0b0b00b000b00bb00bbb000000000000000
+gggggggggggggggrgggrgggrgggggggrggrgrgrgggggggrgrggrggggrgggrggrggrgrgrgggrgrggrgggggggrggrgrgrrrggrgggrggrgggggrggggggggggggggg
+0000000000000000000000000000000b00b0b0bbb00000bbb0bbb0bb00bb00bbb0bbb0bbb0b0b00b000000bbb0b0b00b00bbb00b00bbb0bb0000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000bb0bb00b000b0b00000bbb0bbb0bbb0bbb0bbb0bbb0b0b0bbb0bbb00bb0bb00000000000000000000000000000000000000000000
+ggggggggggggggggggggggrgrgrgrgrgggrgrgggggrgrgrggggrggrgrggrggrgrgrgrggrgggrggrgrgrgrggggggggggrgggrgggrgggggggggggggggggggggggg
+0000000000000000000000b0b0b0b0b000bbb00000bb00bb000b00bb000b00bb00b0b00b000b00b0b0b0b000000000bbb0bbb0bbb00000000000000000000000
+ggggggggggggggggggggggrgrgrgrgrgggggrgggggrgrgrggggrggrgrggrggrgrgrgrggrgggrggrgrgrgrggggggggggrgggrgggrgggggggggggggggggggggggg
+0000000000000000000000bb00b0b0bbb0bbb00000b0b0bbb00b00b0b0bbb0bbb00bb00b00bbb0bb00b0b00b0000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+lggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggl
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+lggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggl
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+lggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggl
+05000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000050
+lggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggl
+05000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000050
+lglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglgl
+05000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000050
+lglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglgl
+05050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005050
+lglglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglglgl
+05050500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000505050
+lglglglglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglglglglgl
+05050505050500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000505050505050
+lglglglglglglglglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglglglglglglglglgl
+
