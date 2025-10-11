@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
---thought for the day (v0.01)
+--thought for the day (v0.02)
 --by fab.industries
 
 function _init()
@@ -130,7 +130,7 @@ function current_time()
  
  clock=hz..":"..mz..":"..sz
 
- local df= imp_date(m,d,h)
+ local df= imp_date(y,m,d,h)
  local ys= tostr(y)
  local yn= sub(ys,2)
  
@@ -138,28 +138,68 @@ function current_time()
 
 end
 
-function imp_date(m,d,h)
+function imp_date(y,m,d,h)
 
- --elapsed days in year
- --based on avg of 30.436875
- --days in a month
+ --is this a leap year?
+
+ if y%4==0 and y%100!=0 then
+  leap=true
+ elseif y%400==0 then
+  leap=true
+ else  
+  leap=false
+ end
+
+ --days to date
  
- local cm=m-1
- local dm=cm*30.438675
- local cd=d-1
- local days=dm+cd
+ if leap==false then
+  ld=0
+ else
+  ld=1
+ end
  
- --elapsed hours in year
+ if m==1 then
+  d2d=d
+ elseif m==2 then
+  d2d=d+31
+ elseif m==3 then
+  d2d=d+ld+59
+ elseif m==4 then
+  d2d=d+ld+90
+ elseif m==5 then
+  d2d=d+ld+120
+ elseif m==6 then 
+  d2d=d+ld+151
+ elseif m==7 then
+  d2d=d+ld+181
+ elseif m==8 then
+  d2d=d+ld+212
+ elseif m==9 then
+  d2d=d+ld+243
+ elseif m==10 then
+  d2d=d+ld+273
+ elseif m==11 then
+  d2d=d+ld+304
+ elseif m==12 then
+  d2d=d+ld+334
+ end
  
- local hd=days*24
- local hours=hd+h
+ --hours to date
+ 
+ local h2d=(d2d*24-24)+h
+ 
+ --hours in a year
+ 
+ if leap==true then
+  hiy=8784
+ else
+  hiy=8760
+ end
  
  --elapsed hours in thousandth
  --of a year
- --based on avg of 365.2425
- --days in a year
  
- local id=hours/8.76582
+ local id=h2d/(hiy/1000)
  return flr(id)
 
 end

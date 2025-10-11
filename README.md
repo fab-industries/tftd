@@ -8,13 +8,7 @@ This is based on my earlier web version for [munitorum.net](https://munitorum.ne
 
 ### To Do
 
-* The calculation of the year fraction of the date is horribly imprecise. I need to improve this.
-
-### Changelog
-
-**Version 0.01**
-
-Initial release
+* Add more proverbs
 
 ### Thanks
 
@@ -22,3 +16,8 @@ Many thanks to the following people whose code I used as part of my program:
 
 * [Glitch effect](https://gist.github.com/morningtoast/18a2f24a0706226e8762116b801303c4) by [**morningtoast**](https://github.com/morningtoast)
 * [Scanline effect](https://www.lexaloffle.com/bbs/?pid=148980#p) by [**freds72**](https://www.lexaloffle.com/bbs/?uid=25532)
+
+### Changelog
+
+**v0.02** (11/10/2025): Improved Imperial date calculation algorithm  
+**v0.01** (08/10/2025): Initial release
