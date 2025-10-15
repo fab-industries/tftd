@@ -6,9 +6,9 @@ A small PICO-8 app that displays the current time and [Imperial date](https://wh
 
 This is based on my earlier web version for [munitorum.net](https://munitorum.net).
 
-### To Do
+### Download PICO-8 Cartridge
 
-* Add more proverbs
+![PICO-8 cart](tftd.p8.png)
 
 ### Thanks
 
@@ -19,5 +19,6 @@ Many thanks to the following people whose code I used as part of my program:
 
 ### Changelog
 
+**v0.03** (15/10/2025): Added proverbs, minor improvements
 **v0.02** (11/10/2025): Improved Imperial date calculation algorithm  
 **v0.01** (08/10/2025): Initial release

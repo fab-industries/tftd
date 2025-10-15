@@ -1,22 +1,23 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
---thought for the day (v0.02)
+--thought for the day (v0.03)
 --by fab.industries
 
 function _init()
 
  cls(0)
  t=0
+ filt=0
  offset=1
  max_lin=0
- wsly=-1
+ wsly=-400
  glitch_t=0
  glitch_newt=true
  
  cartdata("fabsh_tftd")
  tftd_cart=dget(1)
- tftd=thoughts[tftd_cart]
+ tftd="+++ "..thoughts[tftd_cart].." +++"
  
 end
 
@@ -33,11 +34,17 @@ function _draw()
 
  cls(0)
  
- spr(0,31,12,8,3)
+ fi_logo()
  
- print("\^w\^t"..clock,32,40,3)
- print(date,39,52,11)
- print_thought()
+ if filt>=120 then
+ 
+  spr(0,31,12,8,3)
+ 
+  print("\^w\^t"..clock,32,46,3)
+  print(date,39,58,11)
+  print_thought()
+ 
+ end
  
  glitch()
  draw_wsl() 
@@ -49,46 +56,126 @@ end
 --thoughts
 
 thoughts={
- "+++ there is no such thing|as innocence - only varying|degrees of guilt. +++",
- "+++ reason begets doubt;|doubt begets heresy. +++",
- "+++ only the awkward|question; only the foolish|ask twice. +++",
- "+++ success is measured in|blood; yours or your|enemy's. +++",
- "+++ the reward for treachery|is retribution. +++",
- "+++ hope is the beginning|of unhappiness +++",
- "+++ even a man who has|nothing can still offer|his life. +++",
- "+++ inspiration grows from|the barrel of a gun. +++",
- "+++ walk softly and|carry a big gun. +++",
- "+++ a mind without purpose|will wander in dark places. +++",
- "+++ a moment of laxity|spawns a lifetime|of heresy. +++",
- "+++ a small mind is|a tidy mind. +++",
- "+++ a suspicious mind|is a healthy mind. +++",
- "+++ an open mind is like|a fortress with its gates|unbarred and unguarded +++",
- "+++ call no man happy|until he is dead. +++",
- "+++ death is the servant|of the righteous. +++",
- "+++ doubt is a sign|of weakness. +++",
- "+++ excuses are the|refuge of the weak. +++",
- "+++ foolish are those|who fear nothing, yet claim|to know everything. +++",
- "+++ for a warrior the only|crime is cowardice. +++",
- "+++ happiness is a delusion|of the weak. +++",
- "+++ hate enriches. +++",
- "+++ heresy grows|from idleness. +++",
- "+++ success is commemorated.|failure merely remembered. +++",
- "+++ the rewards of|tolerance are treachery|and betrayal. +++",
- "+++ the truly wise are|always afraid. +++",
- "+++ through the destruction|of our enemies we earn|our salvation. +++",
- "+++ prayer cleanses the|soul, but pain cleanses|the body. +++",
- "+++ innocence|proves nothing. +++",
- "+++ there is nothing to fear|but failure +++",
- "+++ to question is|to doubt. +++",
- "+++ reason is the cloak|of traitors. +++",
- "+++ ruthlessness is the|kindness of the wise. +++",
- "+++ sorrow awaits|the foolhardy. +++",
- "+++ the burden of failure|is the most terrible|punishment of all. +++",
- "+++ the difference between|heresy and treachery is|ignorance. +++",
- "+++ the dissident invites|only retribution. +++",
- "+++ the justice of your action|is measured by the strength|of your conviction. +++",
- "+++ the keenest blade|is righteous hatred. +++",
- "+++ the most deviant mind|is often concealed in an|unblemished body. +++"
+ "there is no such thing|as innocence - only varying|degrees of guilt.",
+ "reason begets doubt;|doubt begets heresy.",
+ "only the awkward|question; only the foolish|ask twice.",
+ "success is measured in|blood; yours or your|enemy's.",
+ "the reward for treachery|is retribution.",
+ "hope is the beginning|of unhappiness.",
+ "even a man who has|nothing can still offer|his life.",
+ "inspiration grows from|the barrel of a gun.",
+ "walk softly and|carry a big gun.",
+ "a mind without|purpose will wander|in dark places.",
+ "a moment of laxity|spawns a lifetime|of heresy.",
+ "a small mind is|a tidy mind.",
+ "a suspicious mind|is a healthy mind.",
+ "an open mind is like|a fortress with its gates|unbarred and unguarded.",
+ "call no man happy|until he is dead.",
+ "death is the servant|of the righteous.",
+ "doubt is a sign|of weakness.",
+ "excuses are the|refuge of the weak.",
+ "foolish are those|who fear nothing, yet claim|to know everything.",
+ "for a warrior the only|crime is cowardice.",
+ "happiness is a delusion|of the weak.",
+ "hate enriches.",
+ "heresy grows|from idleness.",
+ "success is|commemorated. failure merely|remembered.",
+ "the rewards of|tolerance are treachery|and betrayal.",
+ "the truly wise are|always afraid.",
+ "through the destruction|of our enemies we earn|our salvation.",
+ "prayer cleanses the|soul, but pain cleanses|the body.",
+ "innocence|proves nothing.",
+ "there is nothing to fear|but failure",
+ "to question is|to doubt.",
+ "reason is the cloak|of traitors.",
+ "ruthlessness is the|kindness of the wise.",
+ "sorrow awaits|the foolhardy.",
+ "the burden of failure|is the most terrible|punishment of all.",
+ "the difference between|heresy and treachery is|ignorance.",
+ "the dissident invites|only retribution.",
+ "the justice of your action|is measured by the strength|of your conviction.",
+ "the keenest blade|is righteous hatred.",
+ "the most deviant mind|is often concealed in an|unblemished body.",
+ "the mutant bears heresy|on the outside, the traitor|hides it in his soul.",
+ "the only reaction to|treachery is vengeance.",
+ "the road to purity|is drenched in the blood|of the martyred.",
+ "the seed of heresy|rests in the minds of|reasonable men.",
+ "the traitor's hand|lies closer than|you think.",
+ "the universe is a big|place and, whatever happens,|you will not be missed.",
+ "the wage of negligence|is utter destruction.",
+ "the wise man|learns from the deaths|of others.",
+ "there are no answers.|only death.",
+ "timidity begets|indecision; indecision begets|treachery.",
+ "to compromise|is to err.",
+ "to err is to|invite retribution.",
+ "to withdraw in|disgust is not apathy.",
+ "truth begets hatred.",
+ "trying to understand|weakens the will to act.",
+ "victory needs no|explanation, defeat|allows none.",
+ "vigilance is the|brother of truth.",
+ "vigilance is|your shield.",
+ "you are not required|to think, only to act.",
+ "zeal is its|own excuse.",
+ "a broad mind|lacks focus.",
+ "a coward always|seeks compromise.",
+ "a logical argument must|be dismissed with|absolute conviction!",
+ "a questioning servant is|more dangerous than|an ignorant heretic.",
+ "accept your lot!",
+ "an empty mind is|a loyal mind.",
+ "analysis is the|bane of conviction.",
+ "appeasement is|a curse.",
+ "be strong in|your ignorance.",
+ "blessed is the mind|too small for doubt.",
+ "burn the heretic.|kill the mutant.|purge the unclean.",
+ "compromise is akin|to treachery.",
+ "contemplation is|the womb of treachery.",
+ "death brings|its own reward.",
+ "death is the|only answer.",
+ "facts are chains|that bind perception|and fetter truth.",
+ "forgiveness is a|sign of weakness.",
+ "intellect is a mask|for traitors.",
+ "intolerance is|a blessing.",
+ "knowledge is power,|hide it well.",
+ "knowledge is|to be feared!",
+ "leniency is a|sign of weakness!",
+ "life is a prison,|death a release.",
+ "mercy is a sign|of weakness.",
+ "negotiation|is surrender.",
+ "never forget,|never forgive.",
+ "not even the dead know|the end of war.",
+ "only in death|does duty end.",
+ "only the insane|have strength enough|to prosper.",
+ "peace is hell.",
+ "perseverance and|silence are the|highest virtues.",
+ "only the weak|question.",
+ "all souls cry|out for salvation.",
+ "all mortal life|is folly that does not|feed the spirit.",
+ "blessed are|the gun makers.",
+ "blind faith|is a just cause.",
+ "curse now|the death in vain.",
+ "damnation is eternal.",
+ "dark dreams lie|upon the heart.",
+ "heresy must be|met with hatred.",
+ "know thine enemy.",
+ "sins hidden in|the heart turn all|into decay.",
+ "the tools of|salvation are faith|and bullets.",
+ "a treacherous thought|is as dangerous as|a hundred bullets.",
+ "doubt is the|fatal flaw in|any armour.",
+ "to punish|the traitor is reward|in itself.",
+ "enlightenment is a myth;|we do not need to understand|in order to hate.",
+ "death and duty are|all we must give.",
+ "betrayal'stithe is|the hangman's noose.",
+ "true happiness stems|only from duty.",
+ "it is better|for a man to be afraid|than happy.",
+ "to search for|answers is to beat a|path to damnation.",
+ "to err is human;|to err again is|treachery.",
+ "a closed mind|is defence against|sedition.",
+ "knowledge is power;|power corrupts.",
+ "better crippled|in body than corrupt|in mind.",
+ "to relinquish contempt|is capitulation.",
+ "do not let fear|conquer hate!",
+ "a servant who shows|disobedience today, prepares|a riot tomorrow.",
+ "you teach a|man to read, you raise|a bright heretic.",
  }
 
 -->8
@@ -210,8 +297,8 @@ function pick_thought()
  
  local max_th=count(thoughts)
  thought_i=flr(rnd(max_th))
- local curr_th=thoughts[thought_i]
-
+ local curr_th="+++ "..thoughts[thought_i].." +++"
+ 
  offset=1
  return curr_th
  
@@ -220,9 +307,10 @@ end
 
 function print_thought()
 
- print("thought for the day:",24,76,3)
+ print("thought for the day:",24,82,3)
 
  local lin=split(tftd,"|",false)
+ 
  max_lin=#lin
  
  foreach(lin,print_line) 
@@ -236,7 +324,7 @@ function print_line(lin)
  end
  
  local yo=6*offset
- local y=84+yo
+ local y=90+yo
  
  local width=print(lin,0,-10)
  
@@ -340,6 +428,31 @@ function move_wsl()
  end
 
 end
+
+function fi_logo()
+ 
+ if t<121 and filt==1 then
+ 
+  sfx(0)
+ 
+ end
+ 
+ if t<121 and filt<121 then
+  
+  spr(64,32,20,8,4)
+  spr(72,32,52,8,4)
+  print("(c) 2025",48,100,3)
+  print("fab.industries", 36,108,11)
+  filt+=1
+ 
+ else
+ 
+  return
+ 
+ end
+
+
+end
 __gfx__
 bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000000000000000000000000000
 0bbbbbbbbbbbbbbbbbbbbbb000000000000000000bbbbbbbbbbbbbbbbbbbbbb00000000000000000000000000000000000000000000000000000000000000000
@@ -365,6 +478,76 @@ bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000
 0000000000000000000000000bbbb0bbbb0bbbb00000000000000000000000000000000500000000000000000000000000000000000000000000000000000000
 0000000000000000000000000b00000bb00000b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000b000000000000b00000000000000000000000000000000500000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000333bbbbbbbbbbbb33b33333333333333333333333b33bbbbbbbbbbb333000
+000b0000000000000000000000000000000000000000000000000000000bb00000033bbbbbbbbbbbbb333b333333333333333333333b333bbbbbbbbbbb333000
+000bb00000000000000000000000000000000000000000000000000000bbb00000033bbbbbbbbbbbbb3333b3333333333333333333b3333bbbbbbbbbbb333000
+000bbb000000000000000000000000000000000000000000000000000bbb30000003bbbbbbbbbbbbbb33333b33333333333333333b33333bbbbbbbbbbbb33000
+0003bbbb000000000000000000000000000000000000000000000000bbbb30000003bbbbbbbbbbbbbb333333b33333333333333bb333333bbbbbbbbbbbb33000
+0003bbbbb000000000000000000000000000000000000000000000bbbbb3300000033bbbbbbbbbbbbbb333333b3333333333333b333333bbbbbbbbbbbbbb3000
+00033bbbbbb000000000000000000000000000000000000000000bbbbbb330000003333bbbbbbbbbbbbbbbbbbbb33333333333bbbbbbbbbbbbbbbbbbbbb33000
+00033bbbbbbb000000000000000000000000000000000000000bbbbbbb333000003333333bbbbbbbbbbbbbbbbbbb333333333bbbbbbbbbbbbbbbbbbbb3333000
+000333bbbbbbbb000000000000000000000000000000000000bbbbbbbb3330000033333333bbbbbbbbbbbbbbbbbbb3333333bbbbbbbbbbbbbbbbbbb333333000
+000333bbbbbbbbb000000000000000000000000000000000bbbbbbbbb3333000003333333333bbbbbbbbbbbbbbbbbb33333bbbbbbbbbbbbbbbbbbb3333333300
+0003333bbbbbbbbbb000000000000000000000000000000bbbbbbbbbb33330000333333333333bbbbbbbbbbbbbbbbb33333bbbbbbbbbbbbbbbbb333333333300
+0003333bbbbbbbbbbbb00000000000000000000000000bbbbbbbbbbbb3333000033333333333333bbbbbbbbbbbbbbbb333bbbbbbbbbbbbbbbbb3333333333300
+0003333bbbbbbbbbbbbb00000000000000000000000bbbbbbbbbbbbb333330000333333333333333bbbbbbbbbbbbbbbb3bbbbbbbbbbbbbbbb333333333333330
+00033333bbbbbbbbbbbbbb00000000000000000000bbbbbbbbbbbbbb33333000033333333333333333bbbbbbbbbbbbbb3bbbbbbbbbbbbbb33333333333333330
+00033333bbbbbbbbbbbbbbb00000000000000000bbbbbbbbbbbbbbb3333330003333333333333333333bbbbbbbbbbbb333bbbbbbbbbbbb333333333333333330
+000333333bbbbbbbbbbbbbbbb00000000000000bbbbbbbbbbbbbbbb333333000000033333333333333333bbbbbbbbb33333bbbbbbbbb33333333333333333333
+000333333bbbbbbbbbbbbb3333333000000333333bbbbbbbbbbbbb33333330000000000033333333333333bbbbbbbb33333bbbbbbbb333333333333333333330
+0003333333bbbbbbbbbb33333333333333333333333bbbbbbbbbbb3333333000000000000003333333333333bbbbb3333333bbbbb33333333333333333333000
+0003333333bbbbbbbb33333333333bbbbb33333333333bbbbbbbb333333330000000000000000bb33333333333bb333333333bbb333333333333333300000000
+0003333333bbbbbb3333333bbbbbbbbbbbbbbbb33333333bbbbbb33333333000000000000000000bbbb333333333333333333333333333333330000000000000
+00033333333bbb3333bbbbbbbbbbbbbbbbbbbbbbbbbbb33333bbb333333330000000000000000000bbbbbb333333333333333333333333bbb000000000000000
+000333333333bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb333333333000000000000000000000bbbbbbbb333333333333333bbbbbbb0000000000000000
+00033333333b33333333333333333333333333333333333333333333333330000000000000000000000bbbbbbbbbbbb3333bbbbbbbbbbb000000000000000000
+00033333333bb333333333333333333333333333333333333333b33333333000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000000
+0003333333bbbb3333333333333333333333333333333333333bbb33333330000000000000000000000000bbbbbbbbbbbbbbbbbbbbb000000000000000000000
+0003333333bbbbb33333333333333333333333333333333333bbbb3333333000000000000000000000000000bbbbbbbbbbbbbbbbb00000000000000000000000
+000333333bbbbbbb333333333333333333333333333333333bbbbbb33333300000000000000000000000000000bbbbbbbbbbbbbb000000000000000000000000
+000333333bbbbbbbb3333333333333333333333333333333bbbbbbb333333000000000000000000000000000000bbbbbbbbbbb00000000000000000000000000
+00033333bbbbbbbbbb33333333333333333333333333333bbbbbbbbb3333300000000000000000000000000000000bbbbbbb0000000000000000000000000000
+00033333bbbbbbbbbbb333333333333333333333333333bbbbbbbbbb333330000000000000000000000000000000000bbb000000000000000000000000000000
+0003333bbbbbbbbbb3bb3333333333333333333333333bb3bbbbbbbbb33330000000000000000000000000000000000000000000000000000000000000000000
+000333bbbbbbbbbbb33b3333333333333333333333333b33bbbbbbbbb33330000000000000000000000000000000000000000000000000000000000000000000
+000333bbbbbbbbbbbb33b33333333333333333333333b33bbbbbbbbbbb3330000000000000000000000000000000000000000000000000000000000000000000
+00033bbbbbbbbbbbbb333b333333333333333333333b333bbbbbbbbbbb3330000000000000000000000000000000000000000000000000000000000000000000
+00033bbbbbbbbbbbbb3333b3333333333333333333b3333bbbbbbbbbbb3330000000000000000000000000000000000000000000000000000000000000000000
+0003bbbbbbbbbbbbbb33333b33333333333333333b33333bbbbbbbbbbbb330000000000000000000000000000000000000000000000000000000000000000000
+0003bbbbbbbbbbbbbb333333b33333333333333bb333333bbbbbbbbbbbb330000000000000000000000000000000000000000000000000000000000000000000
+00033bbbbbbbbbbbbbb333333b3333333333333b333333bbbbbbbbbbbbbb30000000000000000000000000000000000000000000000000000000000000000000
+0003333bbbbbbbbbbbbbbbbbbbb33333333333bbbbbbbbbbbbbbbbbbbbb330000000000000000000000000000000000000000000000000000000000000000000
+003333333bbbbbbbbbbbbbbbbbbb333333333bbbbbbbbbbbbbbbbbbbb33330000000000000000000000000000000000000000000000000000000000000000000
+0033333333bbbbbbbbbbbbbbbbbbb3333333bbbbbbbbbbbbbbbbbbb3333330000000000000000000000000000000000000000000000000000000000000000000
+003333333333bbbbbbbbbbbbbbbbbb33333bbbbbbbbbbbbbbbbbbb33333333000000000000000000000000000000000000000000000000000000000000000000
+0333333333333bbbbbbbbbbbbbbbbb33333bbbbbbbbbbbbbbbbb3333333333000000000000000000000000000000000000000000000000000000000000000000
+033333333333333bbbbbbbbbbbbbbbb333bbbbbbbbbbbbbbbbb33333333333000000000000000000000000000000000000000000000000000000000000000000
+0333333333333333bbbbbbbbbbbbbbbb3bbbbbbbbbbbbbbbb3333333333333300000000000000000000000000000000000000000000000000000000000000000
+033333333333333333bbbbbbbbbbbbbb3bbbbbbbbbbbbbb333333333333333300000000000000000000000000000000000000000000000000000000000000000
+3333333333333333333bbbbbbbbbbbb333bbbbbbbbbbbb3333333333333333300000000000000000000000000000000000000000000000000000000000000000
+000033333333333333333bbbbbbbbb33333bbbbbbbbb333333333333333333330000000000000000000000000000000000000000000000000000000000000000
+0000000033333333333333bbbbbbbb33333bbbbbbbb3333333333333333333300000000000000000000000000000000000000000000000000000000000000000
+000000000003333333333333bbbbb3333333bbbbb333333333333333333330000000000000000000000000000000000000000000000000000000000000000000
+0000000000000bb33333333333bb333333333bbb3333333333333333000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000bbbb3333333333333333333333333333333300000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000bbbbbb333333333333333333333333bbb0000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000bbbbbbbb333333333333333bbbbbbb00000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000bbbbbbbbbbbbb3bbbbbbbbbbbbb0000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbb00000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000bbbbbbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000bbbbbbbbbbbbbbbbb000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000bbbbbbbbbbbbbb0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000bbbbbbbbbbb000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000bbbbbbb00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000bbb0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __label__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 lglglglglglglglglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglglglglglglglglgl
@@ -406,23 +589,29 @@ ggggggggggggggggggggggggggggggggggggggggggggggggggggggggrggggggggggggrgggggggggg
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-00000000000000000000000000000000333300003333330000000000333300003300000000000000333333003333330000000000000000000000000000000000
-ggggggggggggggggggggggggggggggggjjjjggggjjjjjjggggggggggjjjjggggjjggggggggggggggjjjjjjggjjjjjjgggggggggggggggggggggggggggggggggg
-00000000000000000000000000000000003300000000330000330000003300003300000000330000000033003300330000000000000000000000000000000000
-ggggggggggggggggggggggggggggggggggjjggggggggjjggggjjggggggjjggggjjggggggggjjggggggggjjggjjggjjgggggggggggggggggggggggggggggggggg
-00000000000000000000000000000000003300000033330000000000003300003333330000000000003333003333330000000000000000000000000000000000
-ggggggggggggggggggggggggggggggggggjjggggggjjjjggggggggggggjjggggjjjjjjggggggggggggjjjjggjjjjjjgggggggggggggggggggggggggggggggggg
-00000000000000000000000000000000003300000000330000330000003300003300330000330000000033003300330000000000000000000000000000000000
-ggggggggggggggggggggggggggggggggggjjggggggggjjggggjjggggggjjggggjjggjjggggjjggggggggjjggjjggjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 00000000000000000000000000000000333333003333330000000000333333003333330000000000333333003333330000000000000000000000000000000000
 ggggggggggggggggggggggggggggggggjjjjjjggjjjjjjggggggggggjjjjjjggjjjjjjggggggggggjjjjjjggjjjjjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000000033003300330000330000330000000000330000330000000033000000330000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggggggjjggjjggjjggggjjggggjjggggggggggjjggggjjggggggggjjggggggjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000333333003300330000000000333333000000330000000000003333003333330000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggjjjjjjggjjggjjggggggggggjjjjjjggggggjjggggggggggggjjjjggjjjjjjgggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000330000003300330000330000000033000000330000330000000033003300000000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggjjggggggjjggjjggggjjggggggggjjggggggjjggggjjggggggggjjggjjgggggggggggggggggggggggggggggggggggggg
+00000000000000000000000000000000333333003333330000000000333333000000330000000000333333003333330000000000000000000000000000000000
+ggggggggggggggggggggggggggggggggjjjjjjggjjjjjjggggggggggjjjjjjggggggjjggggggggggjjjjjjggjjjjjjgggggggggggggggggggggggggggggggggg
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 000000000000000000000000000000000000000bbb00000bbb0bbb0bbb00000bbb0bbb0bbb00000bbb0bbb000000000000000000000000000000000000000000
-gggggggggggggggggggggggggggggggggggggggrgrgggggggrgggrgrgrgggggrgrgggrgrgggggggrrrgggrgggggggggggggggggggggggggggggggggggggggggg
-000000000000000000000000000000000000000b0b0000000b000b0b0b00000b0b0bbb0bbb00000b0b00bb000000000000000000000000000000000000000000
-gggggggggggggggggggggggggggggggggggggggrgrgggggggrgggrgrgrgggggrgrgrgggggrgggggrgrgggrgggggggggggggggggggggggggggggggggggggggggg
-000000000000000000000000000000000000000bbb0000000b000b0bbb00000bbb0bbb0bbb00b00b0b0bbb000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggrgrgggggggrgrgrgrgrgggggrgrgggrgrgggggggrrrgggrgggggggggggggggggggggggggggggggggggggggggg
+000000000000000000000000000000000000000b0b0000000b0bbb0bbb00000b0b0bbb0bbb00000b0b00bb000000000000000000000000000000000000000000
+gggggggggggggggggggggggggggggggggggggggrgrgggggggrgrgrgrgrgggggrgrgrgggggrgggggrgrgggrgggggggggggggggggggggggggggggggggggggggggg
+000000000000000000000000000000000000000bbb0000000b0bbb0bbb00000bbb0bbb0bbb00b00b0b0bbb000000000000000000000000000000000000000000
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
@@ -456,23 +645,17 @@ gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-000000000000000000000000000000bbb0b0b0bbb00000bb00bbb00bb00bb0bbb0bb00bbb0bb00bbb00000bbb0bb00b0b0bbb0bbb0bbb00bb000000000000000
-gggggggggggggggrgggrgggrgggggggrggrgrgrgggggggrgrggrggrgggrggggrggrgrgrgggrgrggrgggggggrggrgrgrgrggrgggrggrgggrggggggggggggggggg
-00000000000000bbb0bbb0bbb000000b00bbb0bb000000b0b00b00bbb0bbb00b00b0b0bb00b0b00b0000000b00b0b0b0b00b000b00bb00bbb000000000000000
-gggggggggggggggrgggrgggrgggggggrggrgrgrgggggggrgrggrggggrgggrggrggrgrgrgggrgrggrgggggggrggrgrgrrrggrgggrggrgggggrggggggggggggggg
-0000000000000000000000000000000b00b0b0bbb00000bbb0bbb0bb00bb00bbb0bbb0bbb0b0b00b000000bbb0b0b00b00bbb00b00bbb0bb0000000000000000
+000000000000000000000000000000000000000000bbb0b0b00bb0b0b00bb0bbb00bb00000bbb0bbb0bbb00000bbb0b0b0bbb000000000000000000000000000
+gggggggggggggggggggggggggggrgggrgggrggggggrgggrgrgrgggrgrgrgggrgggrgggggggrgrgrgrgrggggggggrggrgrgrggggggggggggggggggggggggggggg
+00000000000000000000000000bbb0bbb0bbb00000bb000b00b000b0b0bbb0bb00bbb00000bbb0bb00bb0000000b00bbb0bb0000000000000000000000000000
+gggggggggggggggggggggggggggrgggrgggrggggggrgggrgrgrgggrgrgggrgrgggggrgggggrgrgrgrgrggggggggrggrgrgrggggggggggggggggggggggggggggg
+000000000000000000000000000000000000000000bbb0b0b00bb00bb0bb00bbb0bb000000b0b0b0b0bbb000000b00b0b0bbb000000000000000000000000000
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-00000000000000000000000bb0bb00b000b0b00000bbb0bbb0bbb0bbb0bbb0bbb0b0b0bbb0bbb00bb0bb00000000000000000000000000000000000000000000
-ggggggggggggggggggggggrgrgrgrgrgggrgrgggggrgrgrggggrggrgrggrggrgrgrgrggrgggrggrgrgrgrggggggggggrgggrgggrgggggggggggggggggggggggg
-0000000000000000000000b0b0b0b0b000bbb00000bb00bb000b00bb000b00bb00b0b00b000b00b0b0b0b000000000bbb0bbb0bbb00000000000000000000000
-ggggggggggggggggggggggrgrgrgrgrgggggrgggggrgrgrggggrggrgrggrggrgrgrgrggrgggrggrgrgrgrggggggggggrgggrgggrgggggggggggggggggggggggg
-0000000000000000000000bb00b0b0bbb0bbb00000b0b0bbb00b00b0b0bbb0bbb00bb00b00bbb0bb00b0b00b0000000000000000000000000000000000000000
-gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000bbb0bbb0bbb0b0b00bb0bbb000000bb0bbb00000bbb0b0b0bbb00000b0b0bbb0bbb0b0b000000000000000000000000000000000000000
+ggggggggggggggggggrgrgrgggrgggrgrgrgggrgggggggrgrgrggggggggrggrgrgrgggggggrgrgrgggrgrgrgrggggggggggrgggrgggrgggggggggggggggggggg
+000000000000000000bb00bb00bb00b0b0b000bb000000b0b0bb0000000b00bbb0bb000000b0b0bb00bbb0bb0000000000bbb0bbb0bbb0000000000000000000
+ggggggggggggggggggrgrgrgggrgggrgrgrgrgrgggggggrgrgrggggggggrggrgrgrgggggggrrrgrgggrgrgrgrggggggggggrgggrgggrgggggggggggggggggggg
+000000000000000000b0b0bbb0b0000bb0bbb0bbb00000bb00b00000000b00b0b0bbb00000bbb0bbb0b0b0b0b00b000000000000000000000000000000000000
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
@@ -495,3 +678,5 @@ lglglglglggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 05050505050500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000505050505050
 lglglglglglglglglgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggglglglglglglglglgl
 
+__sfx__
+071a00000f252002022425224202302623c202292521f2021f2621d2521d202242522920235202002020020201202002020020202202002020020200202022020020202202002020220202202022020220202202
