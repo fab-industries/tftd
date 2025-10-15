@@ -19,6 +19,6 @@ Many thanks to the following people whose code I used as part of my program:
 
 ### Changelog
 
-**v0.03** (15/10/2025): Added proverbs, minor improvements
+**v0.03** (15/10/2025): Added proverbs, minor improvements  
 **v0.02** (11/10/2025): Improved Imperial date calculation algorithm  
 **v0.01** (08/10/2025): Initial release
