@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
---thought for the day (v0.03)
+--thought for the day (v0.04)
 --by fab.industries
 
 function _init()
@@ -17,7 +17,12 @@ function _init()
  
  cartdata("fabsh_tftd")
  tftd_cart=dget(1)
- tftd="+++ "..thoughts[tftd_cart].." +++"
+ if tftd_cart==0 then
+  tftd=pick_thought()
+  dset(1,thought_i)
+ else
+  tftd="+++ "..thoughts[tftd_cart].." +++"
+ end
  
 end
 
