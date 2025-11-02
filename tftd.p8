@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
---thought for the day (v0.05)
+--thought for the day (v0.06)
 --by fab.industries
 
 function _init()
@@ -29,6 +29,10 @@ end
 function _update60()
 
  t+=1
+ 
+ if filt<500 then
+  filt+=1
+ end
  
  current_time()
  newday_check()
@@ -170,7 +174,7 @@ thoughts={
  "to punish|the traitor is reward|in itself.",
  "enlightenment is a myth;|we do not need to understand|in order to hate.",
  "death and duty are|all we must give.",
- "betrayal'stithe is|the hangman's noose.",
+ "betrayal's tithe is|the hangman's noose.",
  "true happiness stems|only from duty.",
  "it is better|for a man to be afraid|than happy.",
  "to search for|answers is to beat a|path to damnation.",
@@ -448,7 +452,6 @@ function fi_logo()
   spr(72,32,52,8,4)
   print("(c) 2025",48,100,3)
   print("fab.industries", 36,108,11)
-  filt+=1
  
  else
  
