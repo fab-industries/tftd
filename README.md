@@ -51,3 +51,10 @@ The source code is licensed under the [MIT License](https://github.com/fab-indus
 #### v0.01 - 08/10/2025
 
 * Initial release
+
+### Thanks
+
+Many thanks to the following people whose code I used as part of my program:
+
+* [Glitch effect](https://gist.github.com/morningtoast/18a2f24a0706226e8762116b801303c4) by [**morningtoast**](https://github.com/morningtoast)
+* [Scanline effect](https://www.lexaloffle.com/bbs/?pid=148980#p) by [**freds72**](https://www.lexaloffle.com/bbs/?uid=25532)
