@@ -10,11 +10,11 @@ Thought for the Day is brought to you by [_**FAB INDUSTRIES**_](https://fab.indu
 
 This app is available as a cartridge for the PICO-8 fantasy console and as standalone binaries for Windows, 64-bit Linux, Mac OS X and the Raspberry Pi.
 
-* [PICO-8 cartridge](https://github.com/fab-industries/tftd/releases/download/v0.06/tftd.p8.png)
-* [Windows](https://github.com/fab-industries/tftd/releases/download/v0.06/tftd_windows.zip)
-* [Linux](https://github.com/fab-industries/tftd/releases/download/v0.06/tftd_linux.zip)
-* [MacOS X](https://github.com/fab-industries/tftd/releases/download/v0.06/tftd_osx.zip)
-* [Raspberry Pi](https://github.com/fab-industries/tftd/releases/download/v0.06/tftd_raspi.zip)
+* [PICO-8 cartridge](https://github.com/fab-industries/tftd/releases/download/v0.07/tftd.p8.png)
+* [Windows](https://github.com/fab-industries/tftd/releases/download/v0.07/tftd_windows.zip)
+* [Linux](https://github.com/fab-industries/tftd/releases/download/v0.07/tftd_linux.zip)
+* [MacOS X](https://github.com/fab-industries/tftd/releases/download/v0.07/tftd_osx.zip)
+* [Raspberry Pi](https://github.com/fab-industries/tftd/releases/download/v0.07/tftd_raspi.zip)
 
 ## Web Version
 
@@ -28,6 +28,10 @@ The source code is licensed under the [MIT License](https://github.com/fab-indus
 
 ### Changelog
 
+#### v0.07 - 11/01/2026
+
+* Fixed a bug with the date display if the year fraction was below 100
+
 #### v0.06 - 02/11/2025
 
 * Fixed a bug that prevented the web version of the app from running correctly
@@ -40,14 +44,17 @@ The source code is licensed under the [MIT License](https://github.com/fab-indus
 * Released standalone and web versions
 
 #### v0.04 - 19/10/2025
+
 * Fixed crash when running from the BBS on an iPhone
 
 #### v0.03 - 15/10/2025
 
 * Added proverbs, minor improvements
+
 #### v0.02 - 11/10/2025
 
 * Improved Imperial date calculation algorithm
+
 #### v0.01 - 08/10/2025
 
 * Initial release

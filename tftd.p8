@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
---thought for the day (v0.06)
+--thought for the day (v0.07)
 --by fab.industries
 
 function _init()
@@ -14,6 +14,7 @@ function _init()
  wsly=-400
  glitch_ti=0
  glitch_ta=0
+ pad="no"
  
  cartdata("fabsh_tftd")
  tftd_cart=dget(1)
@@ -231,7 +232,19 @@ function current_time()
  local ys= tostr(y)
  local yn= sub(ys,2)
  
- date="0 "..df.." "..yn..".m3"
+ if df<10 then
+  pad="00"
+ elseif df<100 then
+  pad="0"
+ elseif df>=100 then
+  pad="no"
+ end
+ 
+ if pad!="no" then
+  date="0 "..pad..df.." "..yn..".m3"
+ else
+  date="0 "..df.." "..yn..".m3"
+ end
 
 end
 
@@ -450,7 +463,7 @@ function fi_logo()
   
   spr(64,32,20,8,4)
   spr(72,32,52,8,4)
-  print("(c) 2025",48,100,3)
+  print("(c) 2025-2026",37,100,3)
   print("fab.industries", 36,108,11)
  
  else
